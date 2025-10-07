@@ -30,7 +30,7 @@ class Genius:
         return response.json()
     
     # Exercise - 2
-    def get_artist(self, search_term: str) -> Dict:
+   def get_artist(self, search_term: str) -> Dict:
     """
     Get artist information based on a search term.
     
@@ -38,7 +38,7 @@ class Genius:
         search_term: The artist name to search for
         
     Returns:
-        Dictionary containing artist information
+        Dictionary containing the full API response
     """
     # Step 1: Search for the artist to get the artist ID
     search_endpoint = "/search"
@@ -54,41 +54,42 @@ class Genius:
         artist_endpoint = f"/artists/{artist_id}"
         artist_data = self._make_request(artist_endpoint)
         
-        # Step 3: Return the FULL response (not just the artist)
-        return artist_data  # Changed from: artist_data['response']['artist']
+        # Step 3: Return the FULL response (not just artist data)
+        return artist_data  # Changed from artist_data['response']['artist']
     else:
         return {}
         
     # Exercise - 3
-    def get_artists(self, search_terms: List[str]) -> pd.DataFrame:
-        """Get artist information for multiple search terms."""
-        results = []
-        
-        for search_term in search_terms:
-            try:
-                artist_info = self.get_artist(search_term)
-                
-                if artist_info:
-                    results.append({
-                        'search_term': search_term,
-                        'artist_name': artist_info.get('name', None),
-                        'artist_id': artist_info.get('id', None),
-                        'followers_count': artist_info.get('followers_count', None)
-                    })
-                else:
-                    results.append({
-                        'search_term': search_term,
-                        'artist_name': None,
-                        'artist_id': None,
-                        'followers_count': None
-                    })
-            except Exception as e:
-                print(f"Error processing '{search_term}': {e}")
+   def get_artists(self, search_terms: List[str]) -> pd.DataFrame:
+    """Get artist information for multiple search terms."""
+    results = []
+    
+    for search_term in search_terms:
+        try:
+            artist_data = self.get_artist(search_term)
+            
+            if artist_data and 'response' in artist_data:
+                artist_info = artist_data['response']['artist']  # Extract artist here
+                results.append({
+                    'search_term': search_term,
+                    'artist_name': artist_info.get('name', None),
+                    'artist_id': artist_info.get('id', None),
+                    'followers_count': artist_info.get('followers_count', None)
+                })
+            else:
                 results.append({
                     'search_term': search_term,
                     'artist_name': None,
                     'artist_id': None,
                     'followers_count': None
                 })
-        
-        return pd.DataFrame(results)# your code here ...
+        except Exception as e:
+            print(f"Error processing '{search_term}': {e}")
+            results.append({
+                'search_term': search_term,
+                'artist_name': None,
+                'artist_id': None,
+                'followers_count': None
+            })
+    
+    return pd.DataFrame(results)
