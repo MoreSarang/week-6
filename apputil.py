@@ -31,22 +31,33 @@ class Genius:
     
     # Exercise - 2
     def get_artist(self, search_term: str) -> Dict:
-    """Get artist information based on a search term."""
+    """
+    Get artist information based on a search term.
+    
+    Args:
+        search_term: The artist name to search for
+        
+    Returns:
+        Dictionary containing artist information
+    """
+    # Step 1: Search for the artist to get the artist ID
     search_endpoint = "/search"
     search_params = {'q': search_term}
     search_results = self._make_request(search_endpoint, search_params)
     
-    if search_results and 'response' in search_results and search_results['response']['hits']:
+    # Extract the primary artist ID from the first hit
+    if search_results['response']['hits']:
         first_hit = search_results['response']['hits'][0]
         artist_id = first_hit['result']['primary_artist']['id']
         
+        # Step 2: Get detailed artist information using the artist ID
         artist_endpoint = f"/artists/{artist_id}"
         artist_data = self._make_request(artist_endpoint)
         
-        return artist_data
+        # Step 3: Return the FULL response (not just the artist)
+        return artist_data  # Changed from: artist_data['response']['artist']
     else:
-        # Return empty response with proper structure
-        return {'response': {}}
+        return {}
         
     # Exercise - 3
     def get_artists(self, search_terms: List[str]) -> pd.DataFrame:
