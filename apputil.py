@@ -31,21 +31,22 @@ class Genius:
     
     # Exercise - 2
     def get_artist(self, search_term: str) -> Dict:
-        """Get artist information based on a search term."""
-        search_endpoint = "/search"
-        search_params = {'q': search_term}
-        search_results = self._make_request(search_endpoint, search_params)
+    """Get artist information based on a search term."""
+    search_endpoint = "/search"
+    search_params = {'q': search_term}
+    search_results = self._make_request(search_endpoint, search_params)
+    
+    if search_results and 'response' in search_results and search_results['response']['hits']:
+        first_hit = search_results['response']['hits'][0]
+        artist_id = first_hit['result']['primary_artist']['id']
         
-        if search_results['response']['hits']:
-            first_hit = search_results['response']['hits'][0]
-            artist_id = first_hit['result']['primary_artist']['id']
-            
-            artist_endpoint = f"/artists/{artist_id}"
-            artist_data = self._make_request(artist_endpoint)
-            
-            return artist_data['response']['artist']
-        else:
-            return {}
+        artist_endpoint = f"/artists/{artist_id}"
+        artist_data = self._make_request(artist_endpoint)
+        
+        return artist_data
+    else:
+        # Return empty response with proper structure
+        return {'response': {}}
         
     # Exercise - 3
     def get_artists(self, search_terms: List[str]) -> pd.DataFrame:
