@@ -54,7 +54,7 @@ class Genius:
         artist_endpoint = f"/artists/{artist_id}"
         artist_payload = self._make_request(artist_endpoint)
 
-        # Return the entire payload so autograder sees top-level "response"
+        # Return the entire payload 
         return artist_payload
         
     # Exercise - 3
@@ -74,7 +74,7 @@ class Genius:
                     'followers_count': artist_info.get('followers_count'),
                 })
             except Exception as e:
-                # Keep failure rows explicit; downstream grading often checks row counts/order
+                # Keep failure rows explicit
                 print(f"Error processing '{search_term}': {e}")
                 results.append({
                     'search_term': search_term,
